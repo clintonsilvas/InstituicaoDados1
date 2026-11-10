@@ -14,7 +14,7 @@
 import http from "node:http";
 import zlib from "node:zlib";
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 const INST = {
   nome: process.env.IES_NOME || "Centro Universitário Horizonte Mineiro",
   sigla: process.env.IES_SIGLA || "UNIHM",
@@ -492,7 +492,7 @@ function generate({ seed, nAlunos, nCursos, now, host, gabarito }) {
 // Servidor HTTP
 // ----------------------------------------------------------------------------
 const cache = new Map();
-const server = http.createServer((req, res) => {
+export function handler(req, res) {
   const url = new URL(req.url, "http://localhost");
   const cors = { "Access-Control-Allow-Origin": "*" };
 
@@ -538,7 +538,10 @@ const server = http.createServer((req, res) => {
   }
   res.writeHead(200, headers);
   res.end(body);
-});
+}
 
-server.listen(PORT, () => console.log(`PrevUni Mock IES API rodando na porta ${PORT}`));
+// Local / Render / Railway: sobe o servidor. No Vercel quem chama o handler é api/dados.js.
+if (!process.env.VERCEL) {
+  http.createServer(handler).listen(PORT, () => console.log(`PrevUni Mock IES API rodando na porta ${PORT}`));
+}
 export { generate };

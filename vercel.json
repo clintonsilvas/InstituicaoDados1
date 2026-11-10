@@ -1,0 +1,4 @@
+{
+  "functions": { "api/dados.js": { "maxDuration": 30 } },
+  "rewrites": [{ "source": "/", "destination": "/api/dados" }]
+}
